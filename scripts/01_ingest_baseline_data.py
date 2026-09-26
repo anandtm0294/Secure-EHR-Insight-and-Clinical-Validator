@@ -1,13 +1,10 @@
-import os
 import pandas as pd  # type: ignore[import-not-found]
-from sqlalchemy import URL, create_engine, text  # type: ignore[import-not-found]
-from dotenv import load_dotenv  # type: ignore[import-not-found]
+from sqlalchemy import text  # type: ignore[import-not-found]
 from pathlib import Path
 
+from _database import create_db_engine
+
 def ingest_data():
-    # Load environment variables
-    load_dotenv(override=True)
-    
     # 1. Dynamically resolve project root based on this script's location
     script_dir = Path(__file__).resolve().parent       # .../live-FDE-2/scripts
     project_root = script_dir.parent                   # .../live-FDE-2
@@ -20,22 +17,7 @@ def ingest_data():
     if not csv_path.exists():
         raise FileNotFoundError(f"CRITICAL: Could not find dataset at {csv_path}")
         
-    required_vars = ("DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PORT", "DB_NAME")
-    missing_vars = [name for name in required_vars if not os.getenv(name)]
-    if missing_vars:
-        raise RuntimeError(
-            f"Missing required environment variables: {', '.join(missing_vars)}"
-        )
-
-    db_url = URL.create(
-        drivername="postgresql+psycopg",
-        username=os.environ["DB_USER"],
-        password=os.environ["DB_PASSWORD"],
-        host=os.environ["DB_HOST"],
-        port=int(os.environ["DB_PORT"]),
-        database=os.environ["DB_NAME"],
-    )
-    engine = create_engine(db_url)
+    engine = create_db_engine()
     
     print(f"Executing schema setup from:\n  {schema_path}")
     with engine.begin() as conn:

@@ -1,28 +1,10 @@
-import os
 import pandas as pd
-from sqlalchemy import URL, create_engine, text
-from dotenv import load_dotenv
+from sqlalchemy import text
+
+from _database import create_db_engine
 
 def verify_ingestion():
-    # Load environment variables
-    load_dotenv(override=True)
-    
-    required_vars = ("DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PORT", "DB_NAME")
-    missing_vars = [name for name in required_vars if not os.getenv(name)]
-    if missing_vars:
-        raise RuntimeError(
-            f"Missing required environment variables: {', '.join(missing_vars)}"
-        )
-
-    db_url = URL.create(
-        drivername="postgresql+psycopg",
-        username=os.environ["DB_USER"],
-        password=os.environ["DB_PASSWORD"],
-        host=os.environ["DB_HOST"],
-        port=int(os.environ["DB_PORT"]),
-        database=os.environ["DB_NAME"],
-    )
-    engine = create_engine(db_url)
+    engine = create_db_engine()
     
     print("🔍 Verifying Data Integrity in AWS PostgreSQL...\n")
     
