@@ -12,3 +12,5 @@ models:
   - type: embeddings
     engine: SentenceTransformers
     model: NeuML/bioclinical-modernbert-base-embeddings
+    parameters:
+      local_files_only: true

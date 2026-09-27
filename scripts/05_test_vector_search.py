@@ -7,7 +7,10 @@ def test_vector_search():
     engine = create_db_engine()
     
     print("⏳ Loading local BioClinical ModernBERT model...")
-    model = SentenceTransformer('NeuML/bioclinical-modernbert-base-embeddings')
+    model = SentenceTransformer(
+        "NeuML/bioclinical-modernbert-base-embeddings",
+        local_files_only=True,
+    )
     
     # 1. Define a complex, natural language medical query
     query_text = "Patient presenting with severe liver disease and fluid retention needing diuretics"
